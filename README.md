@@ -11,8 +11,8 @@ The implementation of TATGSL in the paper:
 ```bash
 pip install -e .
 ```
-The `homo-text-graph` package will be installed.
-You can uninstall it with command `pip uninstall homo-text-graph`.
+The `task-gsl` package will be installed.
+You can uninstall it with command `pip uninstall task-gsl`.
 
 If you don't want to install the environment, you can run the code by replacing
 `python src/main.py --argument` with `python -m src.main --argument`.

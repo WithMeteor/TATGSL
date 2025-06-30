@@ -35,7 +35,7 @@ def parse_args():
     parser.add_argument('--top_k', type=int, default=15, help='Top K value of graph sparsification')
     parser.add_argument('--num_hop', type=int, default=2, help='Number of label propagation hops')
     parser.add_argument('--cpu', action='store_true', help='Use cpu')
-    parser.add_argument('--cuda_id', type=int, default=1, help='CUDA device index')
+    parser.add_argument('--cuda_id', type=int, default=0, help='CUDA device index')
     parser.add_argument('--bert_name', type=str, default='all-MiniLM-L6-v2', help='Sbert name')
     parser.add_argument('--plm_path', type=str, default='./sbert/plm', help='Pretrained sbert path')
     parser.add_argument('--ftm_path', type=str, default='./sbert/ftm', help='Fine-tuned sbert model')

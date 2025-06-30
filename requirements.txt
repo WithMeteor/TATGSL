@@ -1,0 +1,12 @@
+# python==3.11.4
+torch==2.1.0+cu118
+transformers==4.49.0
+sentence-transformers==3.4.1
+dgl==1.1.2+cu118
+scikit-learn==1.6.1
+tqdm==4.67.1
+numpy==1.25.2
+datasets==3.5.0
+networkx
+matplotlib
+optuna

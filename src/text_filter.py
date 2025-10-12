@@ -37,7 +37,7 @@ def main():
     save_path = './data/temp/'
     os.makedirs(save_path, exist_ok=True)
 
-    for dataset in ['ohsumed', '20ng', 'R8', 'R52', 'AGNews', 'snippets']:
+    for dataset in ['ohsumed', '20ng', 'R8', 'AGNews', 'snippets']:
 
         print('Load dataset:', dataset)
         texts, labels = load_dataset(dataset)

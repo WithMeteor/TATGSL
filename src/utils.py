@@ -36,13 +36,6 @@ data_args = {
             # 'valid_size': 548,
             "num_classes": 8
          },
-    'R52':
-        {
-            # 'train_size': 6532,
-            # 'test_size': 2568,
-            # 'valid_size': 653,
-            "num_classes": 52
-         },
     'AGNews':
         {
             # 'train_size': 6000,

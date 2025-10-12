@@ -13,7 +13,7 @@ def parse_args():
 
     # 添加参数
     parser.add_argument('--dataset', type=str, default='ohsumed', choices=[
-        'ohsumed', '20ng', 'R8', 'R52', 'AGNews', 'snippets'], help='Name of the dataset')
+        'ohsumed', '20ng', 'R8', 'AGNews', 'snippets'], help='Name of the dataset')
     parser.add_argument('--gnn_type', type=str, default='GSAGE', choices=[
         'GCN', 'GAT', 'GIN', 'GSAGE', 'APPNP'], help='Type of GNN (GCN, GAT, GIN, GSAGE, APPNP)')
     parser.add_argument('--readout', type=str, default='mean', choices=[

@@ -1,5 +1,6 @@
 import os
 import dgl
+import copy
 import torch
 import torch.nn as nn
 from tqdm import tqdm
@@ -20,10 +21,21 @@ class GraphClassifier:
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         self.criterion = nn.CrossEntropyLoss()
         self.device = device
+        # EMA teacher for GNN
+        self.ema_decay = 0.95
+        self.use_class_weight = False
+        self.ema_gnn = copy.deepcopy(self.model.gnn).to(self.device)
+        for p in self.ema_gnn.parameters():
+            p.requires_grad = False
 
     def __str__(self):
         return (f"GraphClassifier(in_channels={self.in_channels}, "
                 f"hidden_channels={self.hidden_channels}, num_classes={self.num_classes})")
+
+    def _update_ema(self):
+        with torch.no_grad():
+            for ema_param, param in zip(self.ema_gnn.parameters(), self.model.gnn.parameters()):
+                ema_param.data.mul_(self.ema_decay).add_(param.data * (1.0 - self.ema_decay))
 
     def run(self, train_subgraphs, eval_subgraphs, graph_topo, all_text, dense):
         train_loss = self._train(train_subgraphs, self.optimizer, self.criterion)
@@ -45,6 +57,8 @@ class GraphClassifier:
             loss.backward()
             progress_bar.set_postfix({'loss': loss.item()})
         optimizer.step()
+        # Update EMA teacher after optimizer step
+        self._update_ema()
         return total_loss / len(subgraphs)
 
     def _eval(self, subgraphs):
@@ -55,7 +69,7 @@ class GraphClassifier:
             for subgraph in progress_bar:
                 centroid_label = subgraph[0].item()  # shape: [1]
                 centroid_logit = self.model(subgraph[1], subgraph[2].to(self.device), subgraph[3])
-                # Get Prediction
+                # 获取预测
                 centroid_pred = centroid_logit.argmax(dim=0)
                 correct += (centroid_pred.item() == centroid_label)
                 progress_bar.set_postfix({'correct': correct})
@@ -73,7 +87,7 @@ class GraphClassifier:
             node_feat = self.model.encoder.encode(all_text)
             edge_index, edge_weight = matrix_to_edges(graph_topo, dense)
             graph = dgl.graph((edge_index[0], edge_index[1]))
-            node_logits = self.model.gnn(graph, node_feat, edge_weight)
+            node_logits = self.ema_gnn(graph, node_feat, edge_weight)
         return node_logits, node_feat
 
     def test(self, subgraphs):

@@ -6,34 +6,9 @@ The implementation of TATGSL in the paper:
 
 ## Usage
 
-### Install environment
+### Preprocess and Split Text
 
-```bash
-pip install -e .
-```
-
-The `task-gsl` package will be installed.
-You can uninstall it with command `pip uninstall task-gsl`.
-
-If you don't want to install the environment, you can run the code by replacing
-`python src/main.py --argument` with `python -m src.main --argument`.
-
-### Preprocess Text
-
-The raw text file and label file are prepared at `./data/raw`
-
-```bash
-python src/text_filter.py
-```
-
-The preprocessed text file and label file will be saved at `./data/temp/`
-
-___
-
-### Split Data
-
-When running the training code for the first time, you need to specify the parameter "--do-split" to split data. 
-The divided data will be saved at `./data/split/`
+Text data was preprocessed and divided in advance, and stored in the path `./data/split`
 
 ___
 
@@ -41,6 +16,8 @@ ___
 
 You can train the model with ___Sparse Adjacency Matrix___ by default.
 
+At the first run, the SBERT model 'all-MILM-L6-v2' will be downloaded from [huggingface](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) and saved in the path `./plm`
+
 ```bash
-python src/main.py --dataset 20ng --gnn_type GSAGE --top_k 15 --do_split
+python -m src.main --dataset ohsumed --gnn_type GSAGE --top_k 15
 ```

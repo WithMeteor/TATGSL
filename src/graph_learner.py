@@ -2,12 +2,12 @@ import torch
 import torch.nn as nn
 from src.modules import StrucNet
 import torch.nn.functional as func
-from src.utils import get_pseudo_label
+from src.utils import get_pseudo_label, get_pseudo_label_with_confidence
 
 
 class GraphLearner(nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels,
-                 num_hop, num_layers, top_k, dropout, lr, device):
+                 num_hop, num_layers, top_k, dropout, lr, use_conf, conf_thresh, device):
         super(GraphLearner, self).__init__()
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
@@ -20,6 +20,8 @@ class GraphLearner(nn.Module):
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         self.criterion = nn.KLDivLoss(reduction='batchmean')
         self.device = device
+        self.use_conf = use_conf
+        self.conf_threshold = conf_thresh
 
     def __str__(self):
         return (f"GraphLearner(in_channels={self.in_channels}, "
@@ -29,7 +31,10 @@ class GraphLearner(nn.Module):
     def run(self, node_logits, node_feat, all_label, train_mask, dense):
         all_label = all_label.to(self.device)
         train_mask = train_mask.to(self.device)
-        pseudo_label = get_pseudo_label(node_logits, all_label, train_mask)
+        if self.use_conf:
+            pseudo_label = get_pseudo_label_with_confidence(node_logits, all_label, train_mask, self.conf_threshold)
+        else:
+            pseudo_label = get_pseudo_label(node_logits, all_label, train_mask)
         train_loss = self._train(pseudo_label, node_feat, self.optimizer, self.criterion, dense)
         graph_topo = self._eval(node_feat, dense)
         # graph_topo = graph_topo * (1 - alpha) + learned_topo * alpha

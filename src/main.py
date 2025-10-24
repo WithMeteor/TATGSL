@@ -4,7 +4,7 @@ import argparse
 from src.sbert_trainer import SBertTrainer
 from src.graph_sampler import GraphSampler
 from src.graph_learner import GraphLearner
-from src.graph_classifier import GraphClassifier
+from drop.graph_classifier_ori import GraphClassifier
 from src.utils import data_args, logging_config, split_data, save_graph, Record
 
 
@@ -15,7 +15,7 @@ def parse_args():
     parser.add_argument('--dataset', type=str, default='ohsumed', choices=[
         'ohsumed', '20ng', 'R8', 'AGNews', 'snippets'], help='Name of the dataset')
     parser.add_argument('--gnn_type', type=str, default='GSAGE', choices=[
-        'GCN', 'GAT', 'GIN', 'GSAGE', 'APPNP'], help='Type of GNN (GCN, GAT, GIN, GSAGE, APPNP)')
+        'GCN', 'GAT', 'GIN', 'GSAGE', 'APPNP', 'CPGNN', 'GPRGNN', 'H2GNN'], help='Type of GNN (GCN, GAT, GIN, GSAGE, APPNP)')
     parser.add_argument('--readout', type=str, default='mean', choices=[
         'mean', 'max', 'centroid'], help='Readout function of GNN')
     parser.add_argument('--train_per_label', type=int, default=10, help='Training sample per label')
@@ -46,6 +46,8 @@ def parse_args():
     parser.add_argument('--no_finetune', action='store_true', help='Do not finetune sbert model')
     parser.add_argument('--end2end', action='store_true', help='Do end2end training for plm')
     parser.add_argument('--no_gsl', action='store_true', help='Do not train gsl model')
+    parser.add_argument('--conf_thresh', type=float, default=0.7, help='Confidence threshold τp')
+    parser.add_argument('--no_conf', action='store_true', help='Not use confidence-threshold for GSL')
     parser.add_argument('--seed', type=int, default=123, help='Random seed')
     parser.add_argument('--iter', type=int, default=0, help='Running iteration')
     args = parser.parse_args()
@@ -54,8 +56,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    # todo: remove sensitive
-    logger, save_dir = logging_config(args)  # , sensitive=True
+    logger, save_dir = logging_config(args)
     logger.info(args)
     if args.do_split:  # 划分数据集
         logger.info(f"Split training set, evaluating set and testing set with"
@@ -118,6 +119,8 @@ def main():
         num_layers=args.mlp_layer,
         dropout=args.gsl_dropout,
         lr=args.gsl_learning_rate,
+        use_conf=not args.no_conf,
+        conf_thresh=args.conf_thresh,
         device=device
     )
     test_subgraphs = None
@@ -159,6 +162,7 @@ def main():
     logger.info("Micro average Test Precision, Recall and F1-Score...")
     logger.info(micro_score)
     recorder.visualize()
+    recorder.save()
     for handler in logger.handlers[:]:
         handler.close()
         logger.removeHandler(handler)

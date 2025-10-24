@@ -69,7 +69,9 @@ def logging_config(args, ablation=False, sensitive=False, search=False, trial_id
         save_dir = f'{args.save_path}/{args.dataset}-{args.no_finetune}-{not args.end2end}-{args.no_gsl}-{time_str}'
     else:
         time_str = datetime.now().strftime("%Y%m%d-%H%M%S")
-        save_dir = f'{args.save_path}/{args.dataset}-{args.gnn_type}-{time_str}'
+        # imbalance_conf = args.data_path.split('-')[1]
+        use_conf = not args.no_conf
+        save_dir = f'{args.save_path}/{args.dataset}-{args.gnn_type}-{use_conf}-{time_str}'
 
     os.makedirs(save_dir, exist_ok=True)
 
@@ -276,22 +278,43 @@ def get_pseudo_label(logits, all_label, train_mask):
     return one_hot_label.scatter(1, pseudo_label, 1).detach()
 
 
-def count_confident_rate(logits: torch.Tensor, confidence_threshold=0.9):
+def get_pseudo_label_with_confidence(logits, all_label, train_mask, confidence_threshold=0.7):
     """
-    统计模型预测中有把握的对象数量
+    生成带有置信度过滤的伪标签
 
     参数:
-        logits (torch.Tensor): 模型输出的logits，形状为 N×C
-        confidence_threshold (float): 置信度阈值(0-1之间)
+        logits: 模型输出的原始logits，形状为[num_samples, num_classes]
+        all_label: 包含真实标签的张量，形状为[num_samples]
+        train_mask: 标记有真实标签样本的掩码，形状为[num_samples]
+        confidence_threshold: 置信度阈值，高于此值的预测才会被用作伪标签
 
     返回:
-        float: 有把握预测的对象数量比例
+        独热编码格式的伪标签，低置信度样本为全0（表示未知）
     """
-    probs = torch.softmax(logits, dim=1)
-    max_probs, _ = torch.max(probs, dim=1)
-    confident_mask = max_probs > confidence_threshold
-    confident_count = torch.sum(confident_mask).item()
-    return confident_count / probs.size(0)
+    num_classes = torch.max(all_label).item() + 1
+    batch_size = all_label.shape[0]
+
+    # 计算softmax概率和置信度（最大概率）
+    probs = func.softmax(logits, dim=-1)  # 转换为概率分布
+    max_probs, pred_classes = torch.max(probs, dim=-1)  # 获取最大概率和对应类别
+    confidence_mask = max_probs >= confidence_threshold  # 置信度掩码
+
+    # 初始化伪标签为-1（表示未知）
+    pseudo_label = torch.full((batch_size, 1), -1, dtype=torch.long, device=logits.device)
+
+    # 对高置信度样本赋予预测类别
+    pseudo_label[confidence_mask, 0] = pred_classes[confidence_mask]
+
+    # 对有真实标签的样本，使用真实标签覆盖
+    pseudo_label[train_mask, 0] = all_label[train_mask]
+
+    # 创建独热编码（未知样本将保持全0）
+    one_hot_label = torch.zeros(batch_size, num_classes, device=logits.device)
+    # 只对非-1的标签进行独热编码转换
+    valid_mask = pseudo_label != -1
+    one_hot_label.scatter_(1, pseudo_label[valid_mask].unsqueeze(1), 1)
+
+    return one_hot_label.detach()
 
 
 def save_graph(topo2save: torch.Tensor, save_dir):
@@ -314,6 +337,20 @@ class Record:
         self.gca_eval_acc.append(gca_eval_acc)
         self.gsl_train_loss.append(gsl_train_loss)
         self.gsl_eval_homo.append(gsl_eval_homo)
+
+    def save(self):
+        """将四个列表保存到numpy文件"""
+        # 将四个列表打包成一个元组
+        data = (
+            self.gca_train_loss,
+            self.gca_eval_acc,
+            self.gsl_train_loss,
+            self.gsl_eval_homo
+        )
+        # 保存到numpy文件
+        np.save(f'{self.save_path}/record.npy', data)
+        print(f"Record is saved to {self.save_path}")
+
 
     def visualize(self):
         """可视化训练过程中的指标变化"""

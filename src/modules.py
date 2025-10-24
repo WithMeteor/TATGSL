@@ -1,4 +1,5 @@
 import os
+# os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 import torch
 import torch.nn as nn
 import torch.nn.init as init

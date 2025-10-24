@@ -1,4 +1,5 @@
 import os
+# Uncomment this line below, if you are unable to link to the official Huggingface.
 # os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 import torch
 import torch.nn as nn

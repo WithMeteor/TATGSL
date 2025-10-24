@@ -7,7 +7,7 @@ from tqdm import tqdm
 import torch.nn as nn
 import torch.nn.functional as func
 from collections import defaultdict
-from src.modules_new import SentenceBERT
+from src.modules import SentenceBERT
 from torch.utils.data import Dataset, DataLoader
 
 

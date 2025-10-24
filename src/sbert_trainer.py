@@ -7,7 +7,7 @@ from tqdm import tqdm
 import torch.nn as nn
 import torch.nn.functional as func
 from collections import defaultdict
-from src.modules import SentenceBERT
+from src.modules_new import SentenceBERT
 from torch.utils.data import Dataset, DataLoader
 
 
@@ -167,10 +167,10 @@ class SBertTrainer:
         }
 
     def plm(self):
-        return SentenceBERT(f"{self.plm_path}/{self.model_name}", self.device)
+        return SentenceBERT(self.model_name, self.plm_path, self.device)
 
     def train(self, train_data, eval_data):
-        model = SentenceBERT(f"{self.plm_path}/{self.model_name}", self.device)
+        model = SentenceBERT(self.model_name, self.plm_path, self.device)
         loss_fn = TripletLoss(margin=0.5)
         optimizer = torch.optim.AdamW(model.parameters(), lr=self.lr)
 

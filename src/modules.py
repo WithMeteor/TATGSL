@@ -9,10 +9,10 @@ from dgl.nn.pytorch import GATConv, GraphConv, SAGEConv, GINConv, APPNPConv
 
 
 class SentenceBERT(nn.Module):
-    def __init__(self, model_name, device):
+    def __init__(self, model_name, model_path, device):
         super(SentenceBERT, self).__init__()
-        self.model = AutoModel.from_pretrained(model_name)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = AutoModel.from_pretrained(model_name, cache_dir=model_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=model_path)
         self.device = device
         self.model.to(device)
 

@@ -4,7 +4,7 @@ import argparse
 from src.sbert_trainer import SBertTrainer
 from src.graph_sampler import GraphSampler
 from src.graph_learner import GraphLearner
-from drop.graph_classifier_ori import GraphClassifier
+from src.graph_classifier import GraphClassifier
 from src.utils import data_args, logging_config, split_data, save_graph, Record
 
 

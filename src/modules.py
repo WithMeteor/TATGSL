@@ -1,6 +1,5 @@
 import os
-# Uncomment this line below, if you are unable to link to the official Huggingface.
-# os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 import torch
 import torch.nn as nn
 import torch.nn.init as init
@@ -50,14 +49,15 @@ class SentenceBERT(nn.Module):
         print(f"SBERT model saved to {save_path}")
 
     @classmethod
-    def load(cls, model_path, device):
+    def load(cls, model_name, model_path, device):
         """从指定目录加载模型和分词器"""
         # 检查目录是否存在
         if not os.path.exists(model_path):
             raise FileNotFoundError(f"Model path {model_path} not exits.")
 
         model = cls(
-            model_name=model_path,
+            model_name=model_name,
+            model_path=model_path,
             device=device
         )
         # print(f"SBERT model loaded from {model_path}")

@@ -114,6 +114,6 @@ class GraphClassifier:
         best_model.encoder.save(path)
         best_model.gnn.save(path)
 
-    def load_model(self, path):
-        self.model.encoder = SentenceBERT.load(path, self.device)
+    def load_model(self, name, path):
+        self.model.encoder = SentenceBERT.load(name, path, self.device)
         self.model.gnn = GNNModel.load(path).to(self.device)

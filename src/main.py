@@ -152,7 +152,7 @@ def main():
             gca_best_model = copy.deepcopy(gca.model)
             best_graph = graph_topo.detach().cpu()
     gca.save_model(save_dir, gca_best_model)
-    gca.load_model(save_dir)
+    gca.load_model(args.bert_name, save_dir)
     save_graph(best_graph, save_dir)
     cls_report, macro_score, micro_score = gca.test(test_subgraphs)
     logger.info("Test Precision, Recall and F1-Score...")

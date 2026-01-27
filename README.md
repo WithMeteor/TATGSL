@@ -125,7 +125,7 @@ python src/main.py \
 | Parameter | Description | Default | Options |
 |-----------|-------------|---------|---------|
 | `--dataset` | Dataset name | `ohsumed` | `ohsumed`, `20ng`, `AGNews`, `R8`, `snippets` |
-| `--gnn_type` | GNN backbone | `GSAGE` | `GCN`, `GAT`, `GIN`, `GSAGE`, `APPNP`, `CPGNN`, `GPRGNN`, `H2GNN` |
+| `--gnn_type` | GNN backbone | `GSAGE` | `GCN`, `GAT`, `GIN`, `GSAGE`, `APPNP`|
 | `--readout` | Readout function | `mean` | `mean`, `max`, `centroid` |
 | `--train_per_label` | Training samples per label | `10` | Integer > 0 |
 | `--eval_per_label` | Validation samples per label | `10` | Integer > 0 |
@@ -169,25 +169,25 @@ python src/main.py \
 
 ### Path and System Parameters
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
+| Parameter | Description | Default                                  |
+|-----------|-------------|------------------------------------------|
 | `--bert_name` | Sentence-BERT model name | `sentence-transformers/all-MiniLM-L6-v2` |
-| `--plm_path` | Pre-trained model path | `plm` |
-| `--ftm_path` | Fine-tuned model path | `ftm` |
-| `--data_path` | Dataset path | `./data` |
-| `--save_path` | Output save path | `./out` |
-| `--cuda_id` | GPU device ID | `0` |
-| `--seed` | Random seed | `123` |
+| `--plm_path` | Pre-trained model path | `./plm`                                  |
+| `--ftm_path` | Fine-tuned model path | `./ftm`                                  |
+| `--data_path` | Dataset path | `./data`                                 |
+| `--save_path` | Output save path | `./out`                                  |
+| `--cuda_id` | GPU device ID | `0`                                      |
+| `--seed` | Random seed | `123`                                    |
 
 ## 📊 Datasets
 
 | Dataset | Classes | Domain | Train/Val/Test Samples per Class | Description |
-|---------|---------|--------|----------------------|-------------|
-| ohsumed | 23 | Medical | 10/10/20 | Medical abstract classification |
-| 20ng | 20 | News | 10/10/20 | 20 Newsgroups text classification |
-| AGNews | 4 | News | 10/10/20 | AG News topic classification |
-| R8 | 8 | News | 10/10/20 | Reuters-21578 R8 subset |
-| snippets | 8 | Web Snippets | 10/10/20 | Web search result classification |
+|---------|---------|--------|----------------------------------|-------------|
+| ohsumed | 23 | Medical | 10/10/20                         | Medical abstract classification |
+| 20ng | 20 | News | 10/10/20                         | 20 Newsgroups text classification |
+| AGNews | 4 | News | 10/10/20                         | AG News topic classification |
+| R8 | 8 | News | 10/10/20                         | Reuters-21578 R8 subset |
+| snippets | 8 | Web Snippets | 10/10/20                         | Web search result classification |
 
 ## 🔧 Advanced Usage
 

@@ -21,7 +21,7 @@ def parse_args():
     parser.add_argument('--dataset', type=str, default='ohsumed', choices=[
         'ohsumed', '20ng', 'R8', 'AGNews', 'snippets'], help='Name of the dataset')
     parser.add_argument('--gnn_type', type=str, default='GSAGE', choices=[
-        'GCN', 'GAT', 'GIN', 'GSAGE', 'APPNP', 'CPGNN', 'GPRGNN', 'H2GNN'], help='Type of GNN (GCN, GAT, GIN, GSAGE, APPNP)')
+        'GCN', 'GAT', 'GIN', 'GSAGE', 'APPNP'], help='Type of GNN (GCN, GAT, GIN, GSAGE, APPNP)')
     parser.add_argument('--readout', type=str, default='mean', choices=[
         'mean', 'max', 'centroid'], help='Readout function of GNN')
     parser.add_argument('--train_per_label', type=int, default=10, help='Training sample per label')
@@ -43,8 +43,8 @@ def parse_args():
     parser.add_argument('--cpu', action='store_true', help='Use cpu')
     parser.add_argument('--cuda_id', type=int, default=0, help='CUDA device index')
     parser.add_argument('--bert_name', type=str, default='sentence-transformers/all-MiniLM-L6-v2', help='Sbert name')
-    parser.add_argument('--plm_path', type=str, default='plm', help='Pretrained sbert path')
-    parser.add_argument('--ftm_path', type=str, default='ftm', help='Fine-tuned sbert model')
+    parser.add_argument('--plm_path', type=str, default='./plm', help='Pretrained sbert path')
+    parser.add_argument('--ftm_path', type=str, default='./ftm', help='Fine-tuned sbert model')
     parser.add_argument('--data_path', type=str, default='./data', help='Path to data')
     parser.add_argument('--save_path', type=str, default='./out', help='Path to save the model and log')
     parser.add_argument('--use_dense', action='store_true', help='Learn dense graph adj matrix')

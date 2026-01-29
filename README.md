@@ -26,12 +26,23 @@ TATGSL achieves **state-of-the-art performance** on five text classification ben
 TATGSL/
 ├── README.md                           # This file
 ├── data/                               # Dataset directory
+│   ├── raw
+│   │   ├── 20ng.labels.txt             # 20 Newsgroups dataset labels
+│   │   ├── 20ng.texts.txt              # 20 Newsgroups dataset raw texts
+│   │   ├── AGNews.labels.txt           # AG News dataset labels
+│   │   ├── AGNews.texts.txt            # AG News dataset raw texts
+│   │   ├── R8.labels.txt               # Reuters-8 dataset labels
+│   │   ├── R8.texts.txt                # Reuters-8 dataset raw texts
+│   │   ├── ohsumed.labels.txt          # Ohsumed medical dataset labels
+│   │   ├── ohsumed.texts.txt           # Ohsumed medical dataset raw texts
+│   │   ├── snippets.labels.txt         # Search Engine snippets dataset labels
+│   │   └── snippets.texts.txt          # Search Engine snippets dataset raw texts
 │   └── split/                          # Preprocessed dataset splits
 │       ├── 20ng-t10v10.json            # 20 Newsgroups dataset (10% training, 10% validation)
 │       ├── AGNews-t10v10.json          # AG News dataset
 │       ├── R8-t10v10.json              # Reuters-8 dataset
 │       ├── ohsumed-t10v10.json         # Ohsumed medical dataset
-│       └── snippets-t10v10.json        # Text snippets dataset
+│       └── snippets-t10v10.json        # Search Engine snippets dataset
 ├── plm/                                # Pre-trained language models (auto-downloaded)
 │   └── all-MiniLM-L6-v2/               # Sentence-BERT model
 └── src/                                # TATGSL core implementation
@@ -77,6 +88,38 @@ The datasets are already preprocessed and split in the `data/split/` directory. 
 - `val_texts`, `val_labels`: Validation data
 - `test_texts`, `test_labels`: Test data
 - `unlabeled_texts`: Unlabeled data for semi-supervised learning
+
+#### Dataset Preprocess
+
+The original raw datasets are located in `./data/raw/`. Each dataset consists of two files:
+- `{dataset_name}.texts.txt`: contains the raw text samples
+- `{dataset_name}.labels.txt`: contains the corresponding labels
+
+If you wish to preprocess the raw texts (e.g., cleaning, tokenization, normalization), you can run:
+
+```bash
+python src/text_filter.py
+```
+
+This script will process all datasets and save the cleaned versions to `./data/temp/`. Note that the provided pre-split datasets in `./data/split/` are already cleaned and ready to use.
+
+#### Using Your Own Dataset
+
+If you want to use a custom dataset, please follow these steps:
+
+1. Place your raw text and label files in `./data/raw/` with the same naming format (e.g., `mydataset.texts.txt`, `mydataset.labels.txt`).
+2. Run `main.py` with the `--do_split` flag for the first time:
+
+```bash
+python src/main.py --dataset mydataset --do_split
+```
+
+This will:
+- Automatically preprocess and clean your raw texts
+- Split the dataset into train/validation/test sets (with default ratios)
+- Save the split data to `./data/split/` in JSON format
+
+You only need to run with `--do_split` once for each new dataset. After that, the split files will be available for future runs without re-processing.
 
 ### Pre-trained Models
 
@@ -190,14 +233,6 @@ python src/main.py \
 | snippets | 8 | Web Snippets | 10/10/20                         | Web search result classification |
 
 ## 🔧 Advanced Usage
-
-### Custom Datasets
-
-To use your own dataset:
-
-1. Prepare data in JSON format following the structure in `data/split/`
-2. Update the data loading logic in `src/main.py` if needed
-3. Adjust preprocessing in `src/text_filter.py` for custom text cleaning
 
 ### Extending with New GNN Models
 

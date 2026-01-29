@@ -38,7 +38,7 @@ TATGSL/
 │   │   ├── snippets.labels.txt         # Search Engine snippets dataset labels
 │   │   └── snippets.texts.txt          # Search Engine snippets dataset raw texts
 │   └── split/                          # Preprocessed dataset splits
-│       ├── 20ng-t10v10.json            # 20 Newsgroups dataset (10% training, 10% validation)
+│       ├── 20ng-t10v10.json            # 20 Newsgroups dataset (10 samples per class for training and validation)
 │       ├── AGNews-t10v10.json          # AG News dataset
 │       ├── R8-t10v10.json              # Reuters-8 dataset
 │       ├── ohsumed-t10v10.json         # Ohsumed medical dataset

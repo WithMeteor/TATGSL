@@ -26,7 +26,7 @@ TATGSL achieves **state-of-the-art performance** on five text classification ben
 TATGSL/
 ├── README.md                           # This file
 ├── data/                               # Dataset directory
-│   ├── raw/
+│   ├── raw/                            # Raw un-processed data
 │   │   ├── 20ng.labels.txt             # 20 Newsgroups dataset labels
 │   │   ├── 20ng.texts.txt              # 20 Newsgroups dataset raw texts
 │   │   ├── AGNews.labels.txt           # AG News dataset labels
